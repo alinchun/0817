@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>串天氣api</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+
+</head>
+
+<body>
+    <table id="myTable" class="display">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+            </tr>
+        </thead>
+        <tbody id="myTbody">
+
+        </tbody>
+    </table>
+
+
+    <div class="container" id="myContainer">
+
+
+        
+    </div>
+
+    <script src="./data-api.js"></script>
+
+
+    
+
+
+    <script>
+
+
+        $(function () {
+            console.log('key',key);
+            const myContainer = $('#myContainer');
+            const myTable = $('#myTable');
+            const myTbody = $('#myTbody');
+            
+
+
+            
+            
+
+
+            $.ajax({
+                type: "get",
+                url: url,
+                // data: "data",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response);
+
+                    let data = response['records']['location'];
+                    console.log(data);
+
+                    let content = '';
+
+
+data.forEach((value, key) => {
+    console.log(key);
+    console.log(value.locationName);
+    content = content + `
+        <tr>
+            <td>${key + 1}</td>
+            <td>${value.locationName}</td>
+        </tr>
+    `;
+});
+myTbody.append(content);
+// myTable.DataTable();
+
+myTable.DataTable({
+    language: {
+        "lengthMenu": "顯示 _MENU_ 筆資料",
+        "sProcessing": "處理中...",
+        "sZeroRecords": "没有匹配结果",
+        "sInfo": "目前有 _MAX_ 筆資料",
+        "sInfoEmpty": "目前共有 0 筆紀錄",
+        "sInfoFiltered": " ",
+        "sInfoPostFix": "",
+        "sSearch": "搜尋:",
+        "sUrl": "",
+        "sEmptyTable": "尚未有資料紀錄存在",
+        "sLoadingRecords": "載入資料中...",
+        "sInfoThousands": ",",
+        "oPaginate": {
+            "sFirst": "首頁",
+            "sPrevious": "上一頁",
+            "sNext": "下一頁",
+            "sLast": "末頁"
+        },
+        "order": [
+            [0, "desc"]
+        ],
+        "oAria": {
+            "sSortAscending": ": 以升序排列此列",
+            "sSortDescending": ": 以降序排列此列"
+        }
+    },
+
+});
+}
+});
+
+
+});
+
+</script>
+</body>
+
+</html>
+         
+
+        
+    </script>
+
+
+
+</body>
+
+</html>

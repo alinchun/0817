@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+
+</head>
+
+<body>
+    <h3 class="text-center">氣象資料 36HR</h3>
+
+    <hr>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-primary" onclick="window.print()">Print</button>
+            </div>
+            <div class="col">
+                <button type="button" class="locationBtn btn btn-primary" id="" data-location="新北市">新北市</button>
+            </div>
+            <div class="col">
+                <button type="button" class="locationBtn btn btn-primary" id="" data-location="臺中市">臺中市</button>
+            </div>
+            <div class="col">
+                <button type="button" class="locationBtn btn btn-primary" id="" data-location="高雄市">高雄市</button>
+            </div>
+            <div class="col">
+                <button type="button" class="locationBtn btn btn-primary" id="all" data-location="all">ALL</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <div class="container-fluid mt-5 text-center">
+        <div class="row">
+            <div class="col">
+                序號
+            </div>
+            <div class="col">
+                地點
+            </div>
+            <div class="col">
+                2023-08-17 12:00:00
+            </div>
+            <div class="col">
+                2023-08-17 18:00:00
+            </div>
+            <div class="col">
+                2023-08-18 06:00:00
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="container-fluid text-center" id="myContainer">
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+    <script src="./data-api.js"></script>
+    <script>
+
+
+        // JQUERY 放在ready內
+        // 官網 推薦 用更簡短的方式表達
+        $(function () {
+
+            function getValue(locationName) {
+                console.log('locationName', locationName);
+
+                $.ajax({
+                    type: "get",
+                    url: url,
+                    // data: "data",
+                    dataType: "json",
+                    success: function (res) {
+                        console.log('res', res);
+                        // let data = res['records']['location'];
+                        // [''] . -> 程式語言都是這樣取下一層資料
+                        let data = res['records']['location'];
+                        // let data = res.records.location;
+                        // let data = res->records->location;
+                        console.log('data', data);
+
+                        let content = '';
+
+
+
+                        data.forEach((value, key) => {
+                            let locationNameByData = value.locationName;
+                            //  新北市 == 新北市 資料只抓新北市
+
+                            if (locationName == 'all') {
+
+                            } else {
+                                if (locationName != locationNameByData) {
+                                    return;
+                                }
+                            }
+
+                            console.log(key);
+                            console.log(value.locationName);
+                            let time12 = `${value.weatherElement[2].time[0].parameter.parameterName} - ${value.weatherElement[4].time[0].parameter.parameterName}`;
+                            let time24 = `${value.weatherElement[2].time[1].parameter.parameterName} - ${value.weatherElement[4].time[1].parameter.parameterName}`;
+                            let time36 = `${value.weatherElement[2].time[2].parameter.parameterName} - ${value.weatherElement[4].time[2].parameter.parameterName}`;
+                            let img12 = `${value.weatherElement[0].time[0].parameter.parameterValue}`;
+                            let img24 = `${value.weatherElement[0].time[1].parameter.parameterValue}`;
+                            let img36 = `${value.weatherElement[0].time[2].parameter.parameterValue}`;
+                            let text12 = `${value.weatherElement[0].time[0].parameter.parameterName}`;
+                            let text24 = `${value.weatherElement[0].time[0].parameter.parameterName}`;
+                            let text36 = `${value.weatherElement[0].time[0].parameter.parameterName}`;
+
+                            content = content + `  
+                            <hr>                          
+                            <div class="row mt-3">
+                                <div class="col pt-4">
+                                    ${key + 1}
+                                </div>
+                                <div class="col pt-4">
+                                    ${value.locationName}
+                                </div>
+                                <div class="col">
+                                    ${time12} 
+                                    <img src="./day/${img12}.svg" alt="${text12}" title="${text12}">
+                                </div>
+                                <div class="col">
+                                    ${time24} 
+                                    <img src="./day/${img24}.svg" alt="${text24}" title="${text24}">
+                                </div>
+                                <div class="col">
+                                    ${time36} 
+                                    <img src="./day/${img36}.svg" alt="${text36}" title="${text36}">
+                                </div>
+                            </div>                            
+                        `;
+                        });
+                        myContainer.append(content);
+
+                    }
+                });
+            }
+
+            console.log('key', key);
+            const myContainer = $('#myContainer');
+            const locationBtn = $('.locationBtn');
+
+
+            locationBtn.click(function () {
+                let dataLocation = $(this).attr('data-location');
+                console.log('dataLocation', dataLocation);
+                myContainer.html('');
+                getValue(dataLocation);
+            });
+
+        });
+
+    </script>
+</body>
+
+</html>
